@@ -1,0 +1,37 @@
+name: Terraform Deploy
+
+on:
+    pull_request:
+      branches:
+        - main
+        
+env: 
+    TERRAFORM_VERSION: "1.10.2"
+
+jobs:
+    deploy_dev:
+        runs-on: ubuntu-latest
+        environment: dev 
+        steps: 
+            - name: checkout
+              uses: actions/checkout@v4
+            
+            - name: install terraform 
+              uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: us-east-2
+                
+            - name: terraform init
+              run: | 
+                terraform init 
+                
+            - name: terraform apply
+              run: | 
+                terraform apply --auto-approve
