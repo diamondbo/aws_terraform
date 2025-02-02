@@ -8,6 +8,14 @@ module "main_vpc" {
   cidr_block = "10.0.0.0/16"
 }
 
+resource "aws_internet_gateway" "gw" {
+  vpc_id = module.main_vpc.vpc_id
+
+  tags = {
+    Name = "main"
+  }
+}
+
 module "public_subnet1" {
   source = "./modules/subnet"
   vpc_id = module.main_vpc.vpc_id
@@ -53,5 +61,28 @@ module "private_subnet3" {
   vpc_id = module.main_vpc.vpc_id
   availability_zone = "us-east-2c"
   subnet_cidr_block = "10.0.0.80/28"
+  is_public = false
+}
+module "private_data_subnet1" {
+  source = "./modules/subnet"
+  vpc_id = module.main_vpc.vpc_id
+  availability_zone = "us-east-2a"
+  subnet_cidr_block = "10.0.0.96/28"
+  is_public = false
+}
+
+module "private_data_subnet2" {
+  source = "./modules/subnet"
+  vpc_id = module.main_vpc.vpc_id
+  availability_zone = "us-east-2b"
+  subnet_cidr_block = "10.0.0.112/28"
+  is_public = false
+}
+
+module "private_data_subnet3" {
+  source = "./modules/subnet"
+  vpc_id = module.main_vpc.vpc_id
+  availability_zone = "us-east-2c"
+  subnet_cidr_block = "10.0.0.128/28"
   is_public = false
 }
