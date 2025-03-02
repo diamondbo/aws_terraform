@@ -8,14 +8,6 @@ module "main_vpc" {
   cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_internet_gateway" "gw" {
-  vpc_id = module.main_vpc.vpc_id
-
-  tags = {
-    Name = "main"
-  }
-}
-
 module "public_subnet1" {
   source = "./modules/subnet"
   vpc_id = module.main_vpc.vpc_id
@@ -85,4 +77,16 @@ module "private_data_subnet3" {
   availability_zone = "us-east-2c"
   subnet_cidr_block = "10.0.0.128/28"
   is_public = false
+}
+
+module "routing" {
+  source = "./modules/routing"
+  vpc_id = module.main_vpc.vpc_id
+  public_subnet_id_1 = module.public_subnet1.subnet_id
+  public_subnet_id_2 = module.public_subnet2.subnet_id
+  public_subnet_id_3 = module.public_subnet3.subnet_id
+  private_subnet_id_1 = module.private_subnet1.subnet_id
+  private_subnet_id_2 = module.private_subnet2.subnet_id
+  private_subnet_id_3 = module.private_subnet3.subnet_id
+  
 }
